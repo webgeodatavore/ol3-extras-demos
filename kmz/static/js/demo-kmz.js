@@ -51,7 +51,7 @@
           var oDOM = oParser.parseFromString(text, 'text/xml');
           var links = oDOM.querySelectorAll('NetworkLink Link href');
           var files = Array.prototype.slice.call(links).map(function(el) {
-            return el.textContent;//.replace('http://', '/proxy/');
+            return el.textContent;
           });
           // console.log(files);
           return files;
@@ -125,6 +125,20 @@
           ajaxKMZ(url, combinedCallback);
           setTimeout(repeat_kmz_calls, 60000);
       }
+      vector.on('render', function(event) {
+        var ctx = event.context;
+        ctx.fillStyle = "red";
+        ctx.font = "72px Arial";
+        // get the metrics with font settings
+        var metrics = ctx.measureText("WaterMark Demo");
+        var width = metrics.width;
+        
+        if(vector.getSource().getFeatures().length == 0) {
+            ctx.fillText("WaterMark Demo", ctx.canvas.width/2 - (metrics.width/2) , ctx.canvas.height/2);
+        }
+        ctx.restore();
+      });
+
       repeat_kmz_calls();
 
-      
+
