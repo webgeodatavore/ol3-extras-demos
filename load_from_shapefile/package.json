@@ -1,0 +1,20 @@
+{
+  "name": "ol3_from_shapefile",
+  "version": "1.0.0",
+  "description": "Test to use shp as sourc for OpenLayers 3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify app.js -o bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "catiline": "^2.9.3",
+    "openlayers": "^3.14.1",
+    "shpjs": "^3.1.5"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0"
+  }
+}
