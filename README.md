@@ -14,6 +14,8 @@ Demos for playing with OpenLayers 3 when features not documented because not req
   The demo uses [Pixabay JavaScript-autoComplete](https://github.com/Pixabay/JavaScript-autoComplete) a pure JavaScript autocomplete library (no framework dependency).
   If you want a standalone library for OpenLayers 3 to existing geocoding services, you can look at [ol3-geocoder](https://github.com/jonataswalker/ol3-geocoder) and [ol3-photon](https://github.com/webgeodatavore/ol3-photon)(we authored it for using the French Geocoder [Addok](https://github.com/etalab/addok) who use the same API signatures as Photon)
 
+* [Shapefile loading](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/load_from_shapefile/index.html). Just a readaptation of the sample from [shapefile-js](https://github.com/calvinmetcalf/shapefile-js)
+
 
 Fill an issue for bug or any improvements.
 If you have any other questions, feel free to contact us at contact(at)webgeodatavore(dot)com otherwise.
