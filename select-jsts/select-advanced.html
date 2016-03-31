@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Select content</title>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/ol3/3.14.2/ol.css" type="text/css" />
+    <style type="text/css">
+      #map {
+        height:600px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>OpenLayers demo for selecting by polygon, circle, square and rectangle</h1>
+    <div id="map" class="map">
+      <div id="popup"></div>
+    </div>
+    <form class="form-inline">
+      <label>Geometry type &nbsp;</label>
+      <select id="type">
+        <!-- <option value="Point">Point</option> -->
+        <!-- <option value="LineString">LineString</option> -->
+        <option value="Polygon">Polygon</option>
+        <option value="Circle">Circle</option>
+        <option value="Square">Square</option>
+        <option value="Box">Box</option>
+        <option value="None">None</option>
+      </select>
+    </form>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/ol3/3.14.2/ol.js"></script>
+    <script src="http://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js"></script>
+    <script>
+      var raster = new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      });
+
+      var fill = new ol.style.Fill({
+        color: 'rgba(255,0,255,0.4)'
+      });
+      var stroke = new ol.style.Stroke({
+        color: '#009911',
+        width: 1.75
+      });
+      var styles = [
+        new ol.style.Style({
+          image: new ol.style.Circle({
+            fill: fill,
+            stroke: stroke,
+            radius: 7
+          }),
+          fill: fill,
+          stroke: stroke
+        })
+      ];
+
+      var vector = new ol.layer.Vector({
+        id: 'vector',
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#ffcc33',
+            width: 2
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: '#ffcc33'
+            })
+          })
+        })
+      });
+
+      var layer_to_select = new ol.layer.Vector({
+        id: 'layer_to_select',
+        source: new ol.source.Vector({
+          url: 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_populated_places_simple.geojson',
+          format: new ol.format.GeoJSON()
+        })
+      });
+
+      var map = new ol.Map({
+        layers: [raster, layer_to_select, vector],
+        target: 'map',
+        view: new ol.View({
+          center: [-11000000, 4600000],
+          zoom: 4
+        })
+      });
+
+      var typeSelect = document.getElementById('type');
+
+      var draw, select; // global so we can remove it later
+      var parser = new jsts.io.OL3Parser();
+      var reader_wkt = new jsts.io.WKTReader()
+      function addInteraction() {
+
+        var value = typeSelect.value;
+        if (value !== 'None') {
+          var geometryFunction, maxPoints;
+          if (value === 'Square') {
+            value = 'Circle';
+            geometryFunction = ol.interaction.Draw.createRegularPolygon(4, 45 * (Math.PI / 180));
+          } else if (value === 'Box') {
+            value = 'LineString';
+            maxPoints = 2;
+            geometryFunction = function(coordinates, geometry) {
+              if (!geometry) {
+                geometry = new ol.geom.Polygon(null);
+              }
+              var start = coordinates[0];
+              var end = coordinates[1];
+              geometry.setCoordinates([
+                [start, [start[0], end[1]], end, [end[0], start[1]], start]
+              ]);
+              return geometry;
+            };
+          }
+          draw = new ol.interaction.Draw({
+            source: vector.getSource(),
+            type: /** @type {ol.geom.GeometryType} */ (value),
+            geometryFunction: geometryFunction,
+            maxPoints: maxPoints
+          });
+          map.addInteraction(draw);
+
+          draw.on('drawend',
+            function(evt) {
+              if (evt.feature.getGeometry().getType() == 'Circle') {
+                var geom_select = evt.feature.getGeometry();
+                var pt = reader_wkt.read('POINT (' + geom_select.getCenter().join(' ') + ')')
+                var jsts_geom_select = pt.buffer(geom_select.getRadius());
+              } else {
+                var geom_select = evt.feature.getGeometry();
+                var jsts_geom_select = parser.read(geom_select);
+              }
+
+              var layer_select_geometries = layer_to_select
+                .getSource()
+                .getFeatures()
+                .filter(function(el) {
+                  if (jsts_geom_select.contains(parser.read(el.getGeometry()))) {
+                    return true;
+                  }
+                });
+
+              vector.getSource().clear();
+              select.getFeatures().clear();
+              select.getFeatures().extend(layer_select_geometries);
+              function delay_clear_layer() {
+                timeoutID = window.setTimeout(clear_layer, 300);
+              }
+
+              function clear_layer() {
+                vector.getSource().clear();
+              }
+              delay_clear_layer();
+
+            },
+            this
+          );
+          select = new ol.interaction.Select({
+            layers: [layer_to_select],
+            style: styles,
+            condition: ol.events.condition.never
+          });
+          map.addInteraction(select);
+        }
+      }
+
+      typeSelect.onchange = function(e) {
+        map.removeInteraction(draw);
+        map.removeInteraction(select);
+        addInteraction();
+      };
+
+      addInteraction();
+
+    </script>
+  </body>
+</html>

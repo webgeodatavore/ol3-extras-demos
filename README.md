@@ -16,6 +16,8 @@ Demos for playing with OpenLayers 3 when features not documented because not req
 
 * [Shapefile loading](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/load_from_shapefile/index.html). Just a readaptation of the sample from [shapefile-js](https://github.com/calvinmetcalf/shapefile-js)
 
+* [Select by polygon, circle, square and rectangle](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/select-jsts/select-advanced.html). We manage selection combining `ol.interaction.Draw` with `ol.interaction.Select`.
+
 
 Fill an issue for bug or any improvements.
 If you have any other questions, feel free to contact us at contact(at)webgeodatavore(dot)com otherwise.
