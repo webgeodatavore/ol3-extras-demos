@@ -18,6 +18,9 @@ Demos for playing with OpenLayers 3 when features not documented because not req
 
 * [Select by polygon, circle, square and rectangle](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/select-jsts/select-advanced.html). We manage selection combining `ol.interaction.Draw` with `ol.interaction.Select`.
 
+* [OSRM V5 API consumption](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/osrm-routing/routing-osrm.html)
+  The demo enables to draw two points and from these both coordinates calls the OSRM demo endpoint to get the shortest path.
+
 
 Fill an issue for bug or any improvements.
 If you have any other questions, feel free to contact us at contact(at)webgeodatavore(dot)com otherwise.
