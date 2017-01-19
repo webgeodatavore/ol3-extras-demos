@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vector Layer</title>
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.15.1/css/ol.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+    <script src="http://openlayers.org/en/v3.15.1/build/ol.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    <script src="http://spin.js.org/spin.min.js"></script>
+    <!-- <script src="node_modules/base64-arraybuffer/lib/base64-arraybuffer.js"></script> -->
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <div id="info">&nbsp;</div>
+    <script>
+      function b64EncodeUnicode(str) {
+          return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+              return String.fromCharCode('0x' + p1);
+          }));
+      }
+
+      function b64DecodeUnicode(str) {
+          return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+              return '%' + c.charCodeAt(0).toString(16);
+          }).join(''));
+      }
+      var vectorLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          format: new ol.format.GeoJSON()
+        })
+      });
+
+      var map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.MapQuest({layer: 'sat'})
+          }),
+          vectorLayer
+        ],
+        target: document.getElementById('map'),
+        view: new ol.View({
+          center: [0, 0],
+          zoom: 1
+        })
+      });
+
+      // Web Worker related code mainly borrowed from http://igorminar.github.io/webworker-json-perf/
+      fetcherParser = new Worker('worker.js');
+      payloadSrc = 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_10m_populated_places_simple.geojson';
+      fetcherParser.postMessage(payloadSrc);
+
+      NProgress.start();
+      var target = map.getTarget().firstElementChild;
+      var spinner = new Spinner({color: 'white'}).spin(target);
+      fetcherParser.addEventListener('message', function(e) {
+        console.log(e);
+        var resp = e.data;
+        var resp1 = e.buf;
+        if (resp.status == 'ongoing') {
+          NProgress.set(resp.progress);
+        } else {
+          //console.log(encode(resp.buf));
+          vectorLayer.getSource().addFeatures((new ol.format.GeoJSON()).readFeatures(
+            resp.data, {
+              dataProjection: 'EPSG:4326',
+              featureProjection: 'EPSG:3857'
+            })
+          )
+          NProgress.done();
+          spinner.stop();
+        }
+      }, false);
+
+      fetcherParser.addEventListener('error', function(e) {
+        dump('WebWorker ERROR', e);
+      }, false);
+    </script>
+  </body>
+</html>
