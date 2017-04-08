@@ -14,6 +14,9 @@ Demos for playing with OpenLayers 3 when features not documented because not req
   The demo uses [Pixabay JavaScript-autoComplete](https://github.com/Pixabay/JavaScript-autoComplete) a pure JavaScript autocomplete library (no framework dependency).
   If you want a standalone library for OpenLayers 3 to existing geocoding services, you can look at [ol3-geocoder](https://github.com/jonataswalker/ol3-geocoder) and [ol3-photon](https://github.com/webgeodatavore/ol3-photon)(we authored it for using the French Geocoder [Addok](https://github.com/etalab/addok) who use the same API signatures as Photon)
 
+* [French GeoAPI autocomplete demo](http://rawgit.com/webgeodatavore/ol3-extras-demos/master/french-geoapi-autocomplete/demo-french-geoapi.html)
+  The GeoAPI is a geo-related webservice provided by the French state to be able to search per city, postal code, french unique identifier and location. We just want to demonstrate how to consume it in the browser, associated with a map. You can custom the behavior in the code by playing a bit with options referenced at [the official documentation](https://docs.geo.api.gouv.fr/)
+
 * [Shapefile loading](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/load_from_shapefile/index.html). Just a readaptation of the sample from [shapefile-js](https://github.com/calvinmetcalf/shapefile-js)
 
 * [Select by polygon, circle, square and rectangle](https://rawgit.com/webgeodatavore/ol3-extras-demos/master/select-jsts/select-advanced.html). We manage selection combining `ol.interaction.Draw` with `ol.interaction.Select`.
