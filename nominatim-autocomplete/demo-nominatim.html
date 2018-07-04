@@ -35,7 +35,7 @@
         selector: '#places-search',
         minChars: 2,
         source: function(term, response) {
-          fetch('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + term)
+          fetch('https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + term)
             .then(function(response) {
               return response.text();
             }).then(function(body) {
