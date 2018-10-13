@@ -84,7 +84,7 @@
           var startCoord = ol.proj.toLonLat(startPoint.getGeometry().getCoordinates());
           var destCoord = ol.proj.toLonLat(destPoint.getGeometry().getCoordinates());
           // var root_url = 'http://localhost:5000';
-          var root_url = 'http://router.project-osrm.org';
+          var root_url = 'https://router.project-osrm.org';
           var url = root_url + '/route/v1/driving/' +
             startCoord[0] + ',' + startCoord[1] + ';' +
             destCoord[0] + ',' + destCoord[1] + '?' +
